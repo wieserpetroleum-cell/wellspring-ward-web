@@ -3,6 +3,8 @@ import * as React from "react";
 import { useAuth } from "@/lib/auth-context";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PatientsProvider } from "@/lib/patients-store";
+import { AppointmentsProvider } from "@/lib/appointments-store";
+import { ConsultationsProvider } from "@/lib/consultations-store";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -33,7 +35,11 @@ function AuthenticatedLayout() {
 
   return (
     <PatientsProvider>
-      <AppLayout />
+      <AppointmentsProvider>
+        <ConsultationsProvider>
+          <AppLayout />
+        </ConsultationsProvider>
+      </AppointmentsProvider>
     </PatientsProvider>
   );
 }
