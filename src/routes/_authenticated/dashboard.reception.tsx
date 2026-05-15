@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { UserPlus, ClipboardCheck, CalendarPlus, BedDouble } from "lucide-react";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/reception")({
 });
 
 function ReceptionDashboard() {
+  const navigate = useNavigate();
   const ward = wardSummary();
   const checkedIn = mockAppointments.filter((a) => a.status === "checked-in");
   const walkIns = mockAppointments.filter((a) => a.type === "Walk-in").length;
@@ -55,10 +56,10 @@ function ReceptionDashboard() {
         </div>
         <QuickActions
           actions={[
-            { label: "Check-in Patient", icon: ClipboardCheck },
-            { label: "Register New", icon: UserPlus },
-            { label: "Book Appointment", icon: CalendarPlus },
-            { label: "Allocate Bed", icon: BedDouble },
+            { label: "Check-in Patient", icon: ClipboardCheck, onClick: () => navigate({ to: "/appointments" }) },
+            { label: "Register New", icon: UserPlus, onClick: () => navigate({ to: "/patients/register" }) },
+            { label: "Book Appointment", icon: CalendarPlus, onClick: () => navigate({ to: "/appointments/new" }) },
+            { label: "Allocate Bed", icon: BedDouble, onClick: () => navigate({ to: "/dashboard/nurse" }) },
           ]}
         />
       </div>

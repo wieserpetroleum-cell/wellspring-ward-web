@@ -1,22 +1,29 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Stethoscope, BedDouble, NotebookPen, Activity } from "lucide-react";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentList, type RecentRow } from "@/components/dashboard/RecentList";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { mockAppointments } from "@/lib/mock/appointments";
+import { useAppointments } from "@/lib/appointments-store";
 
 export const Route = createFileRoute("/_authenticated/dashboard/doctor")({
   component: DoctorDashboard,
 });
 
 function DoctorDashboard() {
-  const seen = mockAppointments.filter((a) => a.status === "completed").length;
-  const pending = mockAppointments.filter((a) =>
+  const navigate = useNavigate();
+  const { appointments } = useAppointments();
+  const today = new Date().toISOString().slice(0, 10);
+  const todays = appointments.filter((a) => a.date === today);
+  const seen = todays.filter((a) => a.status === "completed").length;
+  const pending = todays.filter((a) =>
     ["scheduled", "checked-in", "in-consultation"].includes(a.status),
   ).length;
+  const nextUp = todays
+    .filter((a) => a.status === "checked-in")
+    .sort((a, b) => a.time.localeCompare(b.time))[0];
 
-  const schedule: RecentRow[] = mockAppointments.map((a) => ({
+  const schedule: RecentRow[] = todays.map((a) => ({
     id: a.id,
     primary: a.patientName,
     secondary: `${a.type} · ${a.department}`,
@@ -55,10 +62,17 @@ function DoctorDashboard() {
         </div>
         <QuickActions
           actions={[
-            { label: "Start Consultation", icon: Stethoscope },
-            { label: "View Ward", icon: BedDouble },
-            { label: "Write Notes", icon: NotebookPen },
-            { label: "Review Vitals", icon: Activity },
+            {
+              label: nextUp ? `Next: ${nextUp.patientName}` : "Open OPD Queue",
+              icon: Stethoscope,
+              onClick: () =>
+                nextUp
+                  ? navigate({ to: "/consultations/$appointmentId", params: { appointmentId: nextUp.id } })
+                  : navigate({ to: "/appointments" }),
+            },
+            { label: "View Ward", icon: BedDouble, onClick: () => navigate({ to: "/dashboard/nurse" }) },
+            { label: "Write Notes", icon: NotebookPen, onClick: () => navigate({ to: "/appointments" }) },
+            { label: "Review Vitals", icon: Activity, onClick: () => navigate({ to: "/appointments" }) },
           ]}
         />
       </div>
