@@ -14,6 +14,10 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDashboardReceptionRouteImport } from './routes/_authenticated/dashboard.reception'
+import { Route as AuthenticatedDashboardNurseRouteImport } from './routes/_authenticated/dashboard.nurse'
+import { Route as AuthenticatedDashboardDoctorRouteImport } from './routes/_authenticated/dashboard.doctor'
+import { Route as AuthenticatedDashboardBillingRouteImport } from './routes/_authenticated/dashboard.billing'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -39,18 +43,50 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedDashboardReceptionRoute =
+  AuthenticatedDashboardReceptionRouteImport.update({
+    id: '/reception',
+    path: '/reception',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardNurseRoute =
+  AuthenticatedDashboardNurseRouteImport.update({
+    id: '/nurse',
+    path: '/nurse',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardDoctorRoute =
+  AuthenticatedDashboardDoctorRouteImport.update({
+    id: '/doctor',
+    path: '/doctor',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardBillingRoute =
+  AuthenticatedDashboardBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
+  '/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
+  '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
+  '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
+  '/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
+  '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
+  '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -58,13 +94,33 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/_authenticated/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
+  '/_authenticated/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
+  '/_authenticated/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
+  '/_authenticated/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/forgot-password' | '/login' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/dashboard'
+    | '/dashboard/billing'
+    | '/dashboard/doctor'
+    | '/dashboard/nurse'
+    | '/dashboard/reception'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/forgot-password' | '/login' | '/dashboard'
+  to:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/dashboard'
+    | '/dashboard/billing'
+    | '/dashboard/doctor'
+    | '/dashboard/nurse'
+    | '/dashboard/reception'
   id:
     | '__root__'
     | '/'
@@ -72,6 +128,10 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/_authenticated/dashboard'
+    | '/_authenticated/dashboard/billing'
+    | '/_authenticated/dashboard/doctor'
+    | '/_authenticated/dashboard/nurse'
+    | '/_authenticated/dashboard/reception'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,15 +178,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/dashboard/reception': {
+      id: '/_authenticated/dashboard/reception'
+      path: '/reception'
+      fullPath: '/dashboard/reception'
+      preLoaderRoute: typeof AuthenticatedDashboardReceptionRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/nurse': {
+      id: '/_authenticated/dashboard/nurse'
+      path: '/nurse'
+      fullPath: '/dashboard/nurse'
+      preLoaderRoute: typeof AuthenticatedDashboardNurseRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/doctor': {
+      id: '/_authenticated/dashboard/doctor'
+      path: '/doctor'
+      fullPath: '/dashboard/doctor'
+      preLoaderRoute: typeof AuthenticatedDashboardDoctorRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/billing': {
+      id: '/_authenticated/dashboard/billing'
+      path: '/billing'
+      fullPath: '/dashboard/billing'
+      preLoaderRoute: typeof AuthenticatedDashboardBillingRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
   }
 }
 
+interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardBillingRoute: typeof AuthenticatedDashboardBillingRoute
+  AuthenticatedDashboardDoctorRoute: typeof AuthenticatedDashboardDoctorRoute
+  AuthenticatedDashboardNurseRoute: typeof AuthenticatedDashboardNurseRoute
+  AuthenticatedDashboardReceptionRoute: typeof AuthenticatedDashboardReceptionRoute
+}
+
+const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
+  {
+    AuthenticatedDashboardBillingRoute: AuthenticatedDashboardBillingRoute,
+    AuthenticatedDashboardDoctorRoute: AuthenticatedDashboardDoctorRoute,
+    AuthenticatedDashboardNurseRoute: AuthenticatedDashboardNurseRoute,
+    AuthenticatedDashboardReceptionRoute: AuthenticatedDashboardReceptionRoute,
+  }
+
+const AuthenticatedDashboardRouteWithChildren =
+  AuthenticatedDashboardRoute._addFileChildren(
+    AuthenticatedDashboardRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
