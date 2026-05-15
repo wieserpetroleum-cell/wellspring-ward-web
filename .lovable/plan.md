@@ -1,73 +1,79 @@
-# HMS — Frontend Build Plan
+# HMS — Module 2: Dashboards
 
-Frontend-only Hospital Management System (HMS) using the "Clinical Precision" design direction. Mock data only; typed interfaces so backend can be wired later.
+Frontend-only. Builds on Foundation + Module 1 (Auth).
 
-## Scope (this approval covers the foundation + Module 1)
+## Scope
 
-To keep scope manageable, this plan covers the foundation (design system, layout, mock data, routing) and Module 1 (Auth). Subsequent modules will be planned and built in follow-up turns, one module per turn.
+Implement the 5 role-based dashboards from the spec. Each dashboard uses shared widget components and is populated with expanded mock data.
 
-## Foundation
+## What will be built
 
-- **Design tokens** in `src/styles.css` (oklch equivalents of the prototype palette):
-  - `--background` (clinical gray), `--foreground`, `--sidebar` (deep slate), `--primary` (clinical blue)
-  - Status tokens: `--allergy` (red), `--condition` (amber), `--status-ok` (green), `--status-info` (blue)
-  - Inter font from Google Fonts via `<link>` in `__root.tsx` head.
-- **App shell** (`src/components/layout/`):
-  - `AppSidebar.tsx` — dark sidebar with grouped nav (Clinical / Administrative / Admin), MEDICORE.OS logo, user footer, role switcher (dev-only).
-  - `AppTopbar.tsx` — search trigger (Cmd+K placeholder), shift indicator, location selector.
-  - `AppLayout.tsx` — composes sidebar + topbar + `<Outlet />`.
-- **Mock data** in `src/lib/mock/`:
-  - `patients.ts`, `appointments.ts`, `wards.ts`, `bills.ts`, `reports.ts`, `users.ts`, `tpa.ts`.
-  - Typed via `src/lib/types.ts` matching planned future DB tables.
-- **Auth context** (`src/lib/auth-context.tsx`): in-memory current user + role, persisted to localStorage. No real auth; lets protected routes work.
+### Mock data expansion
+- `src/lib/mock/appointments.ts` — OPD/IPD appointments with status, doctor, room
+- `src/lib/mock/wards.ts` — Ward/bed inventory with occupancy status
+- `src/lib/mock/bills.ts` — Invoices with payment status, amount, TPA flag
+- `src/lib/mock/staff.ts` — Doctors, nurses on shift
+- Update `src/lib/types.ts` with `Appointment`, `WardBed`, `Bill`, `StaffMember` interfaces
 
-## Module 1 — Auth (Screens 01, 02)
+### Shared dashboard widgets
+- `src/components/dashboard/KpiCard.tsx` — stat card with label, value, trend indicator
+- `src/components/dashboard/QuickActions.tsx` — button grid for common tasks
+- `src/components/dashboard/RecentList.tsx` — scrollable recent items (appointments, admissions, bills)
+- `src/components/dashboard/BedOccupancyBar.tsx` — visual ward occupancy indicator
 
-Screen 01 — Login
-- Route: `/login`
-- Fields: email/username, password, remember me, "Forgot password?" link.
-- States: idle, submitting, error (bad creds), locked (after N attempts — UI only).
-- Mock: any of the seeded users logs in; sets auth context; redirects to role-appropriate dashboard.
+### Dashboards (5 screens)
 
-Screen 02 — Forgot Password
-- Route: `/forgot-password`
-- Fields: email; success state with "check your inbox" confirmation.
+1. **Admin Dashboard** (`/dashboard`)
+   - KPIs: Total Patients, Staff on Duty, Revenue Today, Pending Bills, Bed Occupancy %
+   - Recent registrations + admissions
+   - System alerts / notifications
+   - Quick actions: Register Patient, New Appointment, Add User, View Reports
 
-Routing:
-- `/` redirects to `/login` if unauthenticated, else to `/dashboard`.
-- `_authenticated` layout route guards module routes (placeholder dashboard route stubs out for now: `/dashboard`).
+2. **Reception Dashboard** (`/dashboard/reception`)
+   - KPIs: Appointments Today, Walk-ins, Bed Availability, Pending Registrations
+   - Live queue: checked-in patients waiting
+   - Quick actions: Check-in, Register, Book Appointment, Bed Allocation
+
+3. **Doctor Dashboard** (`/dashboard/doctor`)
+   - KPIs: OPD Patients Seen, Pending Consultations, Ward Rounds, Surgeries Scheduled
+   - Today's schedule with patient list
+   - Quick actions: Start Consultation, View Ward, Write Notes
+
+4. **Nurse Dashboard** (`/dashboard/nurse`)
+   - KPIs: Beds Under Care, Vitals Due, Medication Rounds, Alerts
+   - Ward occupancy grid with patient names + vitals status
+   - Quick actions: Record Vitals, Administer Meds, Raise Alert
+
+5. **Billing Dashboard** (`/dashboard/billing`)
+   - KPIs: Invoices Generated, Pending Amount, TPA Claims, Collections Today
+   - Ageing table: unpaid bills by bucket (0-30, 31-60, 60+)
+   - Quick actions: Generate Invoice, Process TPA, Record Payment
+
+### Dev-only role switcher
+- Add a small role switcher in `AppSidebar.tsx` user footer (dropdown) so you can preview any dashboard without re-logging.
+
+## Out of scope for this module
+- Real charts/graphs libraries — use CSS bar/progress visuals only
+- Real-time data / websockets
+- Backend APIs
+
+## Routes
+
+| Route | Content |
+|-------|---------|
+| `/dashboard` | Admin Dashboard (default for admin role) |
+| `/dashboard/reception` | Reception Dashboard |
+| `/dashboard/doctor` | Doctor Dashboard |
+| `/dashboard/nurse` | Nurse Dashboard |
+| `/dashboard/billing` | Billing Dashboard |
 
 ## Tech notes
 
-- TanStack Router file-based routes under `src/routes/`.
-- Use shadcn primitives (Button, Input, Card, Badge, Table, Sidebar, Sonner toaster) styled via tokens — no hardcoded colors in components.
-- Login uses react-hook-form + zod for validation.
-- Shadcn `Sidebar` component for the app shell so it's collapsible (icon-mode) on smaller screens.
+- All dashboards are static client-side renders with mock data
+- Shared widgets live in `src/components/dashboard/`
+- KPI values are hardcoded in mocks; trend indicators are static
+- Quick action buttons route to module routes that will be built later (e.g., `/patients/register`, `/opd/appointments`)
 
-## File map
+## Working rhythm
 
-```text
-src/
-  styles.css                              (extend tokens)
-  routes/
-    __root.tsx                            (Inter font, Toaster)
-    index.tsx                             (redirect)
-    login.tsx
-    forgot-password.tsx
-    _authenticated.tsx                    (guard + AppLayout)
-    _authenticated/dashboard.tsx          (placeholder stub)
-  components/
-    layout/AppSidebar.tsx
-    layout/AppTopbar.tsx
-    layout/AppLayout.tsx
-  lib/
-    types.ts
-    auth-context.tsx
-    mock/users.ts
-    mock/patients.ts
-    (other mock files seeded as modules arrive)
-```
-
-## Working rhythm going forward
-
-After this is approved and built, the next turn implements **Module 2 — Dashboards** (5 role dashboards starting with Reception/Admin), then Module 3 — Patient Registration & Records, and so on. One module per turn so you can review and iterate before the next.
+After this is built, the next turn implements **Module 3 — Patient Registration & Records** (Screens 08, 09, 10).
