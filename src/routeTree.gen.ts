@@ -14,6 +14,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedDashboardReceptionRouteImport } from './routes/_authenticated/dashboard.reception'
 import { Route as AuthenticatedDashboardNurseRouteImport } from './routes/_authenticated/dashboard.nurse'
 import { Route as AuthenticatedDashboardDoctorRouteImport } from './routes/_authenticated/dashboard.doctor'
@@ -43,6 +44,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardReceptionRoute =
   AuthenticatedDashboardReceptionRouteImport.update({
     id: '/reception',
@@ -77,16 +84,17 @@ export interface FileRoutesByFullPath {
   '/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
   '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
   '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
   '/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
   '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
   '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
   '/_authenticated/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
   '/_authenticated/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,16 +120,17 @@ export interface FileRouteTypes {
     | '/dashboard/doctor'
     | '/dashboard/nurse'
     | '/dashboard/reception'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/forgot-password'
     | '/login'
-    | '/dashboard'
     | '/dashboard/billing'
     | '/dashboard/doctor'
     | '/dashboard/nurse'
     | '/dashboard/reception'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/doctor'
     | '/_authenticated/dashboard/nurse'
     | '/_authenticated/dashboard/reception'
+    | '/_authenticated/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -178,6 +189,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/reception': {
       id: '/_authenticated/dashboard/reception'
       path: '/reception'
@@ -214,6 +232,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardDoctorRoute: typeof AuthenticatedDashboardDoctorRoute
   AuthenticatedDashboardNurseRoute: typeof AuthenticatedDashboardNurseRoute
   AuthenticatedDashboardReceptionRoute: typeof AuthenticatedDashboardReceptionRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
@@ -222,6 +241,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardDoctorRoute: AuthenticatedDashboardDoctorRoute,
     AuthenticatedDashboardNurseRoute: AuthenticatedDashboardNurseRoute,
     AuthenticatedDashboardReceptionRoute: AuthenticatedDashboardReceptionRoute,
+    AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }
 
 const AuthenticatedDashboardRouteWithChildren =
@@ -250,3 +270,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
