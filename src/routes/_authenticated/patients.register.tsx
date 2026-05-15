@@ -2,7 +2,6 @@ import * as React from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { ArrowLeft, Save, Plus, Camera } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { FormSection, FormGrid } from "@/components/forms/FormSection";
@@ -614,6 +613,3 @@ function NativeSelect({
     </select>
   );
 }
-
-// Re-export to satisfy unused import lint (z used only in validation file)
-export const _z = z;
