@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import * as React from "react";
 import { useAuth } from "@/lib/auth-context";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { PatientsProvider } from "@/lib/patients-store";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -30,5 +31,9 @@ function AuthenticatedLayout() {
     );
   }
 
-  return <AppLayout />;
+  return (
+    <PatientsProvider>
+      <AppLayout />
+    </PatientsProvider>
+  );
 }
