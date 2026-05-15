@@ -80,8 +80,10 @@ function PatientProfile() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => toast("Coming in Module 4")}>
-            <CalendarPlus className="mr-1.5 h-4 w-4" /> New Appointment
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/appointments/new" search={{ patientUid: patient.uid }}>
+              <CalendarPlus className="mr-1.5 h-4 w-4" /> New Appointment
+            </Link>
           </Button>
           <Button variant="outline" size="sm" onClick={() => toast("Coming in Module 5")}>
             <BedDouble className="mr-1.5 h-4 w-4" /> Admit
