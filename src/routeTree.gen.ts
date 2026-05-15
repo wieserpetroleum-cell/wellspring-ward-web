@@ -17,6 +17,7 @@ import { Route as AuthenticatedPatientsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedPatientsIndexRouteImport } from './routes/_authenticated/patients.index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
+import { Route as AuthenticatedPatientsRegisterRouteImport } from './routes/_authenticated/patients.register'
 import { Route as AuthenticatedPatientsUidRouteImport } from './routes/_authenticated/patients.$uid'
 import { Route as AuthenticatedDashboardReceptionRouteImport } from './routes/_authenticated/dashboard.reception'
 import { Route as AuthenticatedDashboardNurseRouteImport } from './routes/_authenticated/dashboard.nurse'
@@ -64,6 +65,12 @@ const AuthenticatedDashboardIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedPatientsRegisterRoute =
+  AuthenticatedPatientsRegisterRouteImport.update({
+    id: '/register',
+    path: '/register',
+    getParentRoute: () => AuthenticatedPatientsRoute,
+  } as any)
 const AuthenticatedPatientsUidRoute =
   AuthenticatedPatientsUidRouteImport.update({
     id: '/$uid',
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
   '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
   '/patients/$uid': typeof AuthenticatedPatientsUidRoute
+  '/patients/register': typeof AuthenticatedPatientsRegisterRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/patients/': typeof AuthenticatedPatientsIndexRoute
 }
@@ -118,6 +126,7 @@ export interface FileRoutesByTo {
   '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
   '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
   '/patients/$uid': typeof AuthenticatedPatientsUidRoute
+  '/patients/register': typeof AuthenticatedPatientsRegisterRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/patients': typeof AuthenticatedPatientsIndexRoute
 }
@@ -134,6 +143,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
   '/_authenticated/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
   '/_authenticated/patients/$uid': typeof AuthenticatedPatientsUidRoute
+  '/_authenticated/patients/register': typeof AuthenticatedPatientsRegisterRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/patients/': typeof AuthenticatedPatientsIndexRoute
 }
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/dashboard/nurse'
     | '/dashboard/reception'
     | '/patients/$uid'
+    | '/patients/register'
     | '/dashboard/'
     | '/patients/'
   fileRoutesByTo: FileRoutesByTo
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/dashboard/nurse'
     | '/dashboard/reception'
     | '/patients/$uid'
+    | '/patients/register'
     | '/dashboard'
     | '/patients'
   id:
@@ -177,6 +189,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/nurse'
     | '/_authenticated/dashboard/reception'
     | '/_authenticated/patients/$uid'
+    | '/_authenticated/patients/register'
     | '/_authenticated/dashboard/'
     | '/_authenticated/patients/'
   fileRoutesById: FileRoutesById
@@ -246,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/patients/register': {
+      id: '/_authenticated/patients/register'
+      path: '/register'
+      fullPath: '/patients/register'
+      preLoaderRoute: typeof AuthenticatedPatientsRegisterRouteImport
+      parentRoute: typeof AuthenticatedPatientsRoute
+    }
     '/_authenticated/patients/$uid': {
       id: '/_authenticated/patients/$uid'
       path: '/$uid'
@@ -308,11 +328,13 @@ const AuthenticatedDashboardRouteWithChildren =
 
 interface AuthenticatedPatientsRouteChildren {
   AuthenticatedPatientsUidRoute: typeof AuthenticatedPatientsUidRoute
+  AuthenticatedPatientsRegisterRoute: typeof AuthenticatedPatientsRegisterRoute
   AuthenticatedPatientsIndexRoute: typeof AuthenticatedPatientsIndexRoute
 }
 
 const AuthenticatedPatientsRouteChildren: AuthenticatedPatientsRouteChildren = {
   AuthenticatedPatientsUidRoute: AuthenticatedPatientsUidRoute,
+  AuthenticatedPatientsRegisterRoute: AuthenticatedPatientsRegisterRoute,
   AuthenticatedPatientsIndexRoute: AuthenticatedPatientsIndexRoute,
 }
 
