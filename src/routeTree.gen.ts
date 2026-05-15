@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPatientsRouteImport } from './routes/_authenticated/patients'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAppointmentsRouteImport } from './routes/_authenticated/appointments'
 import { Route as AuthenticatedPatientsIndexRouteImport } from './routes/_authenticated/patients.index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedPatientsRegisterRouteImport } from './routes/_authenticated/patients.register'
@@ -23,6 +24,7 @@ import { Route as AuthenticatedDashboardReceptionRouteImport } from './routes/_a
 import { Route as AuthenticatedDashboardNurseRouteImport } from './routes/_authenticated/dashboard.nurse'
 import { Route as AuthenticatedDashboardDoctorRouteImport } from './routes/_authenticated/dashboard.doctor'
 import { Route as AuthenticatedDashboardBillingRouteImport } from './routes/_authenticated/dashboard.billing'
+import { Route as AuthenticatedConsultationsAppointmentIdRouteImport } from './routes/_authenticated/consultations.$appointmentId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -53,6 +55,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAppointmentsRoute =
+  AuthenticatedAppointmentsRouteImport.update({
+    id: '/appointments',
+    path: '/appointments',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedPatientsIndexRoute =
   AuthenticatedPatientsIndexRouteImport.update({
     id: '/',
@@ -101,13 +109,21 @@ const AuthenticatedDashboardBillingRoute =
     path: '/billing',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedConsultationsAppointmentIdRoute =
+  AuthenticatedConsultationsAppointmentIdRouteImport.update({
+    id: '/consultations/$appointmentId',
+    path: '/consultations/$appointmentId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/appointments': typeof AuthenticatedAppointmentsRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/patients': typeof AuthenticatedPatientsRouteWithChildren
+  '/consultations/$appointmentId': typeof AuthenticatedConsultationsAppointmentIdRoute
   '/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
   '/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
   '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
@@ -121,6 +137,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/appointments': typeof AuthenticatedAppointmentsRoute
+  '/consultations/$appointmentId': typeof AuthenticatedConsultationsAppointmentIdRoute
   '/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
   '/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
   '/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
@@ -136,8 +154,10 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/_authenticated/appointments': typeof AuthenticatedAppointmentsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/patients': typeof AuthenticatedPatientsRouteWithChildren
+  '/_authenticated/consultations/$appointmentId': typeof AuthenticatedConsultationsAppointmentIdRoute
   '/_authenticated/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
   '/_authenticated/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
   '/_authenticated/dashboard/nurse': typeof AuthenticatedDashboardNurseRoute
@@ -153,8 +173,10 @@ export interface FileRouteTypes {
     | '/'
     | '/forgot-password'
     | '/login'
+    | '/appointments'
     | '/dashboard'
     | '/patients'
+    | '/consultations/$appointmentId'
     | '/dashboard/billing'
     | '/dashboard/doctor'
     | '/dashboard/nurse'
@@ -168,6 +190,8 @@ export interface FileRouteTypes {
     | '/'
     | '/forgot-password'
     | '/login'
+    | '/appointments'
+    | '/consultations/$appointmentId'
     | '/dashboard/billing'
     | '/dashboard/doctor'
     | '/dashboard/nurse'
@@ -182,8 +206,10 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/forgot-password'
     | '/login'
+    | '/_authenticated/appointments'
     | '/_authenticated/dashboard'
     | '/_authenticated/patients'
+    | '/_authenticated/consultations/$appointmentId'
     | '/_authenticated/dashboard/billing'
     | '/_authenticated/dashboard/doctor'
     | '/_authenticated/dashboard/nurse'
@@ -245,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/appointments': {
+      id: '/_authenticated/appointments'
+      path: '/appointments'
+      fullPath: '/appointments'
+      preLoaderRoute: typeof AuthenticatedAppointmentsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/patients/': {
       id: '/_authenticated/patients/'
       path: '/'
@@ -301,6 +334,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardBillingRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/consultations/$appointmentId': {
+      id: '/_authenticated/consultations/$appointmentId'
+      path: '/consultations/$appointmentId'
+      fullPath: '/consultations/$appointmentId'
+      preLoaderRoute: typeof AuthenticatedConsultationsAppointmentIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -344,13 +384,18 @@ const AuthenticatedPatientsRouteWithChildren =
   )
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAppointmentsRoute: typeof AuthenticatedAppointmentsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
   AuthenticatedPatientsRoute: typeof AuthenticatedPatientsRouteWithChildren
+  AuthenticatedConsultationsAppointmentIdRoute: typeof AuthenticatedConsultationsAppointmentIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAppointmentsRoute: AuthenticatedAppointmentsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
   AuthenticatedPatientsRoute: AuthenticatedPatientsRouteWithChildren,
+  AuthenticatedConsultationsAppointmentIdRoute:
+    AuthenticatedConsultationsAppointmentIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -366,3 +411,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
