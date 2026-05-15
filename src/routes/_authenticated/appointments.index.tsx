@@ -112,7 +112,7 @@ function AppointmentsQueue() {
         eyebrow="Module 04 · Appointments"
         title="OPD Queue"
         description="Live patient pipeline. Check in, start consultations and review completed visits."
-        actions={
+        right={
           <Button asChild>
             <Link to="/appointments/new">
               <CalendarPlus className="mr-2 h-4 w-4" />
