@@ -18,6 +18,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppointmentsRouteImport } from './routes/_authenticated/appointments'
 import { Route as AuthenticatedPatientsIndexRouteImport } from './routes/_authenticated/patients.index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
+import { Route as AuthenticatedAppointmentsIndexRouteImport } from './routes/_authenticated/appointments.index'
 import { Route as AuthenticatedPatientsRegisterRouteImport } from './routes/_authenticated/patients.register'
 import { Route as AuthenticatedPatientsUidRouteImport } from './routes/_authenticated/patients.$uid'
 import { Route as AuthenticatedDashboardReceptionRouteImport } from './routes/_authenticated/dashboard.reception'
@@ -73,6 +74,12 @@ const AuthenticatedDashboardIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedAppointmentsIndexRoute =
+  AuthenticatedAppointmentsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAppointmentsRoute,
+  } as any)
 const AuthenticatedPatientsRegisterRoute =
   AuthenticatedPatientsRegisterRouteImport.update({
     id: '/register',
@@ -120,7 +127,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/appointments': typeof AuthenticatedAppointmentsRoute
+  '/appointments': typeof AuthenticatedAppointmentsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/patients': typeof AuthenticatedPatientsRouteWithChildren
   '/consultations/$appointmentId': typeof AuthenticatedConsultationsAppointmentIdRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
   '/patients/$uid': typeof AuthenticatedPatientsUidRoute
   '/patients/register': typeof AuthenticatedPatientsRegisterRoute
+  '/appointments/': typeof AuthenticatedAppointmentsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/patients/': typeof AuthenticatedPatientsIndexRoute
 }
@@ -137,7 +145,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/appointments': typeof AuthenticatedAppointmentsRoute
   '/consultations/$appointmentId': typeof AuthenticatedConsultationsAppointmentIdRoute
   '/dashboard/billing': typeof AuthenticatedDashboardBillingRoute
   '/dashboard/doctor': typeof AuthenticatedDashboardDoctorRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
   '/patients/$uid': typeof AuthenticatedPatientsUidRoute
   '/patients/register': typeof AuthenticatedPatientsRegisterRoute
+  '/appointments': typeof AuthenticatedAppointmentsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/patients': typeof AuthenticatedPatientsIndexRoute
 }
@@ -154,7 +162,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/_authenticated/appointments': typeof AuthenticatedAppointmentsRoute
+  '/_authenticated/appointments': typeof AuthenticatedAppointmentsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/patients': typeof AuthenticatedPatientsRouteWithChildren
   '/_authenticated/consultations/$appointmentId': typeof AuthenticatedConsultationsAppointmentIdRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/reception': typeof AuthenticatedDashboardReceptionRoute
   '/_authenticated/patients/$uid': typeof AuthenticatedPatientsUidRoute
   '/_authenticated/patients/register': typeof AuthenticatedPatientsRegisterRoute
+  '/_authenticated/appointments/': typeof AuthenticatedAppointmentsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/patients/': typeof AuthenticatedPatientsIndexRoute
 }
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/dashboard/reception'
     | '/patients/$uid'
     | '/patients/register'
+    | '/appointments/'
     | '/dashboard/'
     | '/patients/'
   fileRoutesByTo: FileRoutesByTo
@@ -190,7 +200,6 @@ export interface FileRouteTypes {
     | '/'
     | '/forgot-password'
     | '/login'
-    | '/appointments'
     | '/consultations/$appointmentId'
     | '/dashboard/billing'
     | '/dashboard/doctor'
@@ -198,6 +207,7 @@ export interface FileRouteTypes {
     | '/dashboard/reception'
     | '/patients/$uid'
     | '/patients/register'
+    | '/appointments'
     | '/dashboard'
     | '/patients'
   id:
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/reception'
     | '/_authenticated/patients/$uid'
     | '/_authenticated/patients/register'
+    | '/_authenticated/appointments/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/patients/'
   fileRoutesById: FileRoutesById
@@ -292,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/appointments/': {
+      id: '/_authenticated/appointments/'
+      path: '/'
+      fullPath: '/appointments/'
+      preLoaderRoute: typeof AuthenticatedAppointmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedAppointmentsRoute
+    }
     '/_authenticated/patients/register': {
       id: '/_authenticated/patients/register'
       path: '/register'
@@ -344,6 +362,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAppointmentsRouteChildren {
+  AuthenticatedAppointmentsIndexRoute: typeof AuthenticatedAppointmentsIndexRoute
+}
+
+const AuthenticatedAppointmentsRouteChildren: AuthenticatedAppointmentsRouteChildren =
+  {
+    AuthenticatedAppointmentsIndexRoute: AuthenticatedAppointmentsIndexRoute,
+  }
+
+const AuthenticatedAppointmentsRouteWithChildren =
+  AuthenticatedAppointmentsRoute._addFileChildren(
+    AuthenticatedAppointmentsRouteChildren,
+  )
+
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardBillingRoute: typeof AuthenticatedDashboardBillingRoute
   AuthenticatedDashboardDoctorRoute: typeof AuthenticatedDashboardDoctorRoute
@@ -384,14 +416,14 @@ const AuthenticatedPatientsRouteWithChildren =
   )
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAppointmentsRoute: typeof AuthenticatedAppointmentsRoute
+  AuthenticatedAppointmentsRoute: typeof AuthenticatedAppointmentsRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
   AuthenticatedPatientsRoute: typeof AuthenticatedPatientsRouteWithChildren
   AuthenticatedConsultationsAppointmentIdRoute: typeof AuthenticatedConsultationsAppointmentIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAppointmentsRoute: AuthenticatedAppointmentsRoute,
+  AuthenticatedAppointmentsRoute: AuthenticatedAppointmentsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
   AuthenticatedPatientsRoute: AuthenticatedPatientsRouteWithChildren,
   AuthenticatedConsultationsAppointmentIdRoute:
