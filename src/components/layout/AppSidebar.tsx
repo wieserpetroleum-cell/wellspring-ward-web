@@ -96,7 +96,7 @@ export function AppSidebar() {
           value={
             dashboardOptions.find((o) => pathname === o.value)?.value ?? "/dashboard"
           }
-          onChange={(e) => navigate({ to: e.target.value })}
+          onChange={(e) => navigate({ to: e.target.value as "/dashboard" })}
           className="mx-3 w-[calc(100%-1.5rem)] rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary"
         >
           {dashboardOptions.map((o) => (
