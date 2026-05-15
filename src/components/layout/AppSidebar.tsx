@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   Stethoscope,
   BedDouble,
@@ -25,6 +25,14 @@ const adminNav: NavItem[] = [
   { to: "/radiology", label: "Radiology Reports", icon: ScanLine },
 ];
 
+const dashboardOptions = [
+  { value: "/dashboard", label: "Admin" },
+  { value: "/dashboard/reception", label: "Reception" },
+  { value: "/dashboard/doctor", label: "Doctor" },
+  { value: "/dashboard/nurse", label: "Nurse" },
+  { value: "/dashboard/billing", label: "Billing" },
+];
+
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;
   return (
@@ -46,6 +54,7 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const isActive = (to: string) => pathname === to || pathname.startsWith(to + "/");
 
@@ -79,6 +88,23 @@ export function AppSidebar() {
         {adminNav.map((item) => (
           <NavLink key={item.to} item={item} active={isActive(item.to)} />
         ))}
+
+        <div className="mb-2 mt-6 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          Dev · Preview Role
+        </div>
+        <select
+          value={
+            dashboardOptions.find((o) => pathname === o.value)?.value ?? "/dashboard"
+          }
+          onChange={(e) => navigate({ to: e.target.value as "/dashboard" })}
+          className="mx-3 w-[calc(100%-1.5rem)] rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary"
+        >
+          {dashboardOptions.map((o) => (
+            <option key={o.value} value={o.value} className="bg-slate-900">
+              {o.label} dashboard
+            </option>
+          ))}
+        </select>
       </nav>
 
       <div className="border-t border-white/10 p-4">

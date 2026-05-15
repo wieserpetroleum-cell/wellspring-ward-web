@@ -17,3 +17,57 @@ export interface Patient {
   allergies: string[];
   conditions: string[];
 }
+
+export type AppointmentStatus =
+  | "scheduled"
+  | "checked-in"
+  | "in-consultation"
+  | "completed"
+  | "cancelled";
+
+export interface Appointment {
+  id: string;
+  patientId: string;
+  patientName: string;
+  doctor: string;
+  department: string;
+  room: string;
+  time: string; // "09:30"
+  status: AppointmentStatus;
+  type: "OPD" | "Follow-up" | "Walk-in";
+}
+
+export type BedStatus = "available" | "occupied" | "reserved" | "cleaning";
+
+export interface WardBed {
+  id: string;
+  ward: string;
+  bedNumber: string;
+  status: BedStatus;
+  patientName?: string;
+  patientId?: string;
+  vitalsDue?: boolean;
+  alert?: "stable" | "watch" | "critical";
+}
+
+export type BillStatus = "paid" | "pending" | "overdue" | "tpa-pending";
+
+export interface Bill {
+  id: string;
+  invoiceNo: string;
+  patientName: string;
+  amount: number;
+  status: BillStatus;
+  ageDays: number;
+  tpa?: string;
+  createdAt: string;
+}
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  role: Role;
+  department: string;
+  onShift: boolean;
+  shift?: string;
+}
