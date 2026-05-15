@@ -7,6 +7,7 @@ import {
   ScanLine,
   LayoutDashboard,
   LogOut,
+  CalendarClock,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ type NavItem = { to: string; label: string; icon: React.ComponentType<{ classNam
 
 const clinicalNav: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/appointments", label: "OPD Queue", icon: CalendarClock },
   { to: "/opd", label: "OPD Consultation", icon: Stethoscope },
   { to: "/ipd", label: "IPD Ward Management", icon: BedDouble },
   { to: "/patients", label: "Patient Registry", icon: Users },
