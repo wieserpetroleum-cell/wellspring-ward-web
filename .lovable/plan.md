@@ -1,79 +1,97 @@
-# HMS — Module 2: Dashboards
+# HMS — Module 3: Patient Registration & Records
 
-Frontend-only. Builds on Foundation + Module 1 (Auth).
+Frontend-only. Builds on Foundation + Module 1 (Auth) + Module 2 (Dashboards).
+
+Screen 08 (New Patient Registration) is the critical screen and gets the deepest treatment. Screens 09 and 10 are supporting views built on the same data layer.
 
 ## Scope
 
-Implement the 5 role-based dashboards from the spec. Each dashboard uses shared widget components and is populated with expanded mock data.
+Three screens covering the patient lifecycle entry points:
+
+1. **Screen 08 — New Patient Registration** (primary, deepest)
+2. **Screen 09 — Patient Search & Registry**
+3. **Screen 10 — Patient Profile / Record View**
+
+All data is mock and lives in memory. Submitting the registration form appends to the in-memory list so newly registered patients appear in search and profile views during the same session.
 
 ## What will be built
 
-### Mock data expansion
-- `src/lib/mock/appointments.ts` — OPD/IPD appointments with status, doctor, room
-- `src/lib/mock/wards.ts` — Ward/bed inventory with occupancy status
-- `src/lib/mock/bills.ts` — Invoices with payment status, amount, TPA flag
-- `src/lib/mock/staff.ts` — Doctors, nurses on shift
-- Update `src/lib/types.ts` with `Appointment`, `WardBed`, `Bill`, `StaffMember` interfaces
+### Mock data + types
+- Expand `src/lib/types.ts` `Patient` interface with full demographics, contact, identity, insurance/TPA, emergency contact, registration metadata.
+- Expand `src/lib/mock/patients.ts` to ~12 realistic patients (mixed sex/age/conditions).
+- New `src/lib/patients-store.tsx` — React context with `patients`, `addPatient`, `getPatient(uid)`. Seeds from mock; in-memory only (no persistence).
 
-### Shared dashboard widgets
-- `src/components/dashboard/KpiCard.tsx` — stat card with label, value, trend indicator
-- `src/components/dashboard/QuickActions.tsx` — button grid for common tasks
-- `src/components/dashboard/RecentList.tsx` — scrollable recent items (appointments, admissions, bills)
-- `src/components/dashboard/BedOccupancyBar.tsx` — visual ward occupancy indicator
+### Shared form primitives (reusable across modules)
+- `src/components/forms/FormSection.tsx` — section header + grid of fields with the clinical-precision visual (numbered step, thin rule, supporting hint).
+- `src/components/forms/Field.tsx` — label + control + helper/error text wrapper.
+- Existing `Input`, `Select`, `RadioGroup`, `Checkbox`, `Textarea`, `Button` from shadcn/ui used directly.
+- Zod schema in `src/lib/validation/patient.ts` for client-side validation.
 
-### Dashboards (5 screens)
+### Screen 08 — New Patient Registration (`/patients/register`)
 
-1. **Admin Dashboard** (`/dashboard`)
-   - KPIs: Total Patients, Staff on Duty, Revenue Today, Pending Bills, Bed Occupancy %
-   - Recent registrations + admissions
-   - System alerts / notifications
-   - Quick actions: Register Patient, New Appointment, Add User, View Reports
+Multi-section single-page form (no wizard — clinical staff prefer one scrollable form). Sticky right-side summary rail showing live preview of UID, name, age, key flags.
 
-2. **Reception Dashboard** (`/dashboard/reception`)
-   - KPIs: Appointments Today, Walk-ins, Bed Availability, Pending Registrations
-   - Live queue: checked-in patients waiting
-   - Quick actions: Check-in, Register, Book Appointment, Bed Allocation
+Sections:
+1. **Identity** — Title, First/Middle/Last name, Sex, DOB (auto-derives age), Blood group, Marital status, Photo placeholder.
+2. **Contact** — Mobile (primary), Alt mobile, Email, Address line 1/2, City, State, Pincode, Country.
+3. **Identification** — ID type (Aadhaar/Passport/PAN/Other), ID number, Nationality.
+4. **Emergency Contact** — Name, Relationship, Phone.
+5. **Clinical Flags** — Known allergies (chip input), Chronic conditions (chip input), Notes.
+6. **Insurance / TPA** — Has insurance (toggle); when on: Provider, Policy #, TPA name, Validity.
+7. **Registration Meta** — Registration type (OPD/IPD/Emergency), Referred by, Consent checkbox (required).
 
-3. **Doctor Dashboard** (`/dashboard/doctor`)
-   - KPIs: OPD Patients Seen, Pending Consultations, Ward Rounds, Surgeries Scheduled
-   - Today's schedule with patient list
-   - Quick actions: Start Consultation, View Ward, Write Notes
+Behavior:
+- Live UID generation preview: `MR-YYYY-NNNNN` shown in the summary rail and locked once the form is submitted.
+- Required-field validation via Zod with inline errors.
+- Sticky bottom action bar: `Cancel`, `Save & New`, `Save & Open Profile` (primary).
+- On submit: `addPatient`, toast confirmation, navigate to `/patients/$uid`.
+- Allergy / condition chip inputs: type + Enter to add, click chip × to remove.
+- Keyboard-first: every field has tabindex order; primary action is `Cmd/Ctrl+Enter`.
 
-4. **Nurse Dashboard** (`/dashboard/nurse`)
-   - KPIs: Beds Under Care, Vitals Due, Medication Rounds, Alerts
-   - Ward occupancy grid with patient names + vitals status
-   - Quick actions: Record Vitals, Administer Meds, Raise Alert
+Visual:
+- Dense two-column grid inside each section, single column on narrow viewports.
+- Section numbering (01, 02 …) in the clinical-precision style with hairline divider.
+- Summary rail uses the same KPI/status tone language as the dashboards.
 
-5. **Billing Dashboard** (`/dashboard/billing`)
-   - KPIs: Invoices Generated, Pending Amount, TPA Claims, Collections Today
-   - Ageing table: unpaid bills by bucket (0-30, 31-60, 60+)
-   - Quick actions: Generate Invoice, Process TPA, Record Payment
+### Screen 09 — Patient Registry (`/patients`)
 
-### Dev-only role switcher
-- Add a small role switcher in `AppSidebar.tsx` user footer (dropdown) so you can preview any dashboard without re-logging.
+- Top bar: search input (name / UID / mobile), filters (sex, registration type, has allergies).
+- Dense table: UID, Name, Sex/Age, Mobile, Last Visit, Flags (allergy/chronic chips), row click → profile.
+- Empty state when no matches.
+- Primary CTA: `+ Register Patient` → `/patients/register`.
 
-## Out of scope for this module
-- Real charts/graphs libraries — use CSS bar/progress visuals only
-- Real-time data / websockets
-- Backend APIs
+### Screen 10 — Patient Profile (`/patients/$uid`)
 
-## Routes
+- Header: photo placeholder, name, UID, sex/age, contact, allergy/chronic flag chips, primary actions (`New Appointment`, `Admit`, `Edit`).
+- Tabs: Overview (demographics, contact, ID, insurance, emergency), Visits (placeholder list), Allergies & Conditions, Documents (placeholder).
+- Not-found state for unknown UIDs.
 
-| Route | Content |
-|-------|---------|
-| `/dashboard` | Admin Dashboard (default for admin role) |
-| `/dashboard/reception` | Reception Dashboard |
-| `/dashboard/doctor` | Doctor Dashboard |
-| `/dashboard/nurse` | Nurse Dashboard |
-| `/dashboard/billing` | Billing Dashboard |
+### Navigation wiring
+- `AppSidebar` "Patient Registry" item already points at `/patients` — no change needed.
+- Quick action "Register Patient" on Admin + Reception dashboards now routes to `/patients/register` (already wired).
+
+## Out of scope
+- Persistence / backend (Cloud not enabled this module).
+- Photo upload (placeholder only).
+- Editing flow on Screen 10 (button present, opens a toast "coming next module").
+- Visit history data (placeholder list).
+
+## Routes added
+
+| Route | File |
+|-------|------|
+| `/patients` | `src/routes/_authenticated/patients.index.tsx` |
+| `/patients/register` | `src/routes/_authenticated/patients.register.tsx` |
+| `/patients/$uid` | `src/routes/_authenticated/patients.$uid.tsx` |
+| (layout) | `src/routes/_authenticated/patients.tsx` → `<Outlet />` |
 
 ## Tech notes
 
-- All dashboards are static client-side renders with mock data
-- Shared widgets live in `src/components/dashboard/`
-- KPI values are hardcoded in mocks; trend indicators are static
-- Quick action buttons route to module routes that will be built later (e.g., `/patients/register`, `/opd/appointments`)
+- `PatientsProvider` mounted inside `_authenticated.tsx` so the store survives navigation.
+- Validation: single Zod schema; `react-hook-form` + `@hookform/resolvers/zod` (already in shadcn stack).
+- UID generator: `MR-${year}-${(seedCount + index).toString().padStart(5,'0')}` — deterministic for the session.
+- Age helper in `src/lib/age.ts` (`"45y 4m"`-style string used by Module 2).
 
 ## Working rhythm
 
-After this is built, the next turn implements **Module 3 — Patient Registration & Records** (Screens 08, 09, 10).
+After Module 3 ships, next turn implements **Module 4 — OPD Consultation** (appointment booking, queue, consultation note, prescription).
