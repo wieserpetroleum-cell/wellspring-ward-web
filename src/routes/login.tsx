@@ -122,7 +122,7 @@ function LoginPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Checkbox id="remember" {...register("remember")} />
+              <Checkbox id="remember" defaultChecked />
               <Label htmlFor="remember" className="text-xs font-normal text-muted-foreground">
                 Keep me signed in on this device
               </Label>
