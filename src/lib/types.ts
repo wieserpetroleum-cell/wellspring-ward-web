@@ -16,6 +16,44 @@ export interface Patient {
   age: string;
   allergies: string[];
   conditions: string[];
+  // Extended demographics (optional for backward compatibility)
+  title?: "Mr" | "Mrs" | "Ms" | "Dr" | "Master" | "Miss";
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  dob?: string; // ISO date
+  bloodGroup?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "Unknown";
+  maritalStatus?: "single" | "married" | "divorced" | "widowed" | "other";
+  // Contact
+  mobile?: string;
+  altMobile?: string;
+  email?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  country?: string;
+  // Identification
+  idType?: "Aadhaar" | "Passport" | "PAN" | "Other";
+  idNumber?: string;
+  nationality?: string;
+  // Emergency contact
+  emergencyName?: string;
+  emergencyRelation?: string;
+  emergencyPhone?: string;
+  notes?: string;
+  // Insurance
+  hasInsurance?: boolean;
+  insuranceProvider?: string;
+  policyNumber?: string;
+  tpaName?: string;
+  policyValidity?: string;
+  // Registration meta
+  registrationType?: "OPD" | "IPD" | "Emergency";
+  referredBy?: string;
+  registeredAt?: string; // ISO datetime
+  lastVisit?: string;
 }
 
 export type AppointmentStatus =
