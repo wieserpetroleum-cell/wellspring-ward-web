@@ -28,6 +28,7 @@ import { Route as AuthenticatedDashboardBillingRouteImport } from './routes/_aut
 import { Route as AuthenticatedConsultationsAppointmentIdRouteImport } from './routes/_authenticated/consultations.$appointmentId'
 import { Route as AuthenticatedAppointmentsNewRouteImport } from './routes/_authenticated/appointments.new'
 import { Route as AuthenticatedConsultationsAppointmentIdIndexRouteImport } from './routes/_authenticated/consultations.$appointmentId.index'
+import { Route as AuthenticatedConsultationsAppointmentIdPrescriptionRouteImport } from './routes/_authenticated/consultations.$appointmentId.prescription'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -136,6 +137,12 @@ const AuthenticatedConsultationsAppointmentIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedConsultationsAppointmentIdRoute,
   } as any)
+const AuthenticatedConsultationsAppointmentIdPrescriptionRoute =
+  AuthenticatedConsultationsAppointmentIdPrescriptionRouteImport.update({
+    id: '/prescription',
+    path: '/prescription',
+    getParentRoute: () => AuthenticatedConsultationsAppointmentIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/appointments/': typeof AuthenticatedAppointmentsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/patients/': typeof AuthenticatedPatientsIndexRoute
+  '/consultations/$appointmentId/prescription': typeof AuthenticatedConsultationsAppointmentIdPrescriptionRoute
   '/consultations/$appointmentId/': typeof AuthenticatedConsultationsAppointmentIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -171,6 +179,7 @@ export interface FileRoutesByTo {
   '/appointments': typeof AuthenticatedAppointmentsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/patients': typeof AuthenticatedPatientsIndexRoute
+  '/consultations/$appointmentId/prescription': typeof AuthenticatedConsultationsAppointmentIdPrescriptionRoute
   '/consultations/$appointmentId': typeof AuthenticatedConsultationsAppointmentIdIndexRoute
 }
 export interface FileRoutesById {
@@ -193,6 +202,7 @@ export interface FileRoutesById {
   '/_authenticated/appointments/': typeof AuthenticatedAppointmentsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/patients/': typeof AuthenticatedPatientsIndexRoute
+  '/_authenticated/consultations/$appointmentId/prescription': typeof AuthenticatedConsultationsAppointmentIdPrescriptionRoute
   '/_authenticated/consultations/$appointmentId/': typeof AuthenticatedConsultationsAppointmentIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/appointments/'
     | '/dashboard/'
     | '/patients/'
+    | '/consultations/$appointmentId/prescription'
     | '/consultations/$appointmentId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/appointments'
     | '/dashboard'
     | '/patients'
+    | '/consultations/$appointmentId/prescription'
     | '/consultations/$appointmentId'
   id:
     | '__root__'
@@ -252,6 +264,7 @@ export interface FileRouteTypes {
     | '/_authenticated/appointments/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/patients/'
+    | '/_authenticated/consultations/$appointmentId/prescription'
     | '/_authenticated/consultations/$appointmentId/'
   fileRoutesById: FileRoutesById
 }
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConsultationsAppointmentIdIndexRouteImport
       parentRoute: typeof AuthenticatedConsultationsAppointmentIdRoute
     }
+    '/_authenticated/consultations/$appointmentId/prescription': {
+      id: '/_authenticated/consultations/$appointmentId/prescription'
+      path: '/prescription'
+      fullPath: '/consultations/$appointmentId/prescription'
+      preLoaderRoute: typeof AuthenticatedConsultationsAppointmentIdPrescriptionRouteImport
+      parentRoute: typeof AuthenticatedConsultationsAppointmentIdRoute
+    }
   }
 }
 
@@ -456,11 +476,14 @@ const AuthenticatedPatientsRouteWithChildren =
   )
 
 interface AuthenticatedConsultationsAppointmentIdRouteChildren {
+  AuthenticatedConsultationsAppointmentIdPrescriptionRoute: typeof AuthenticatedConsultationsAppointmentIdPrescriptionRoute
   AuthenticatedConsultationsAppointmentIdIndexRoute: typeof AuthenticatedConsultationsAppointmentIdIndexRoute
 }
 
 const AuthenticatedConsultationsAppointmentIdRouteChildren: AuthenticatedConsultationsAppointmentIdRouteChildren =
   {
+    AuthenticatedConsultationsAppointmentIdPrescriptionRoute:
+      AuthenticatedConsultationsAppointmentIdPrescriptionRoute,
     AuthenticatedConsultationsAppointmentIdIndexRoute:
       AuthenticatedConsultationsAppointmentIdIndexRoute,
   }
